@@ -1,5 +1,5 @@
-package gui;
+package GUI;
 
-public class ThongKe {
+public class Thongke {
 
 }
