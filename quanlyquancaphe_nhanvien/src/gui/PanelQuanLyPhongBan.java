@@ -30,6 +30,34 @@ public class PanelQuanLyPhongBan extends JPanel {
         return tableIconCache;
     }
 
+    // Hàm cực xịn: Tự động đổi màu (tint) icon đen thành màu bất kỳ mà không làm mất độ trong suốt
+    private ImageIcon getColorizedIcon(ImageIcon sourceIcon, Color color) {
+        if (sourceIcon == null) return null;
+        java.awt.image.ImageFilter filter = new java.awt.image.RGBImageFilter() {
+            public int filterRGB(int x, int y, int argb) {
+                int a = (argb >> 24) & 0xFF;
+                if (a == 0) return argb; // Bỏ qua pixel trong suốt
+                
+                int origR = (argb >> 16) & 0xFF;
+                int origG = (argb >> 8) & 0xFF;
+                int origB = argb & 0xFF;
+                
+                // Tính độ sáng của pixel gốc
+                int lum = (origR + origG + origB) / 3;
+                
+                // Áp dụng màu mới: Nét màu đen sẽ thành màu mới, nền trắng/trong suốt giữ nguyên
+                int newR = (int)(color.getRed() * (255 - lum) / 255f + lum);
+                int newG = (int)(color.getGreen() * (255 - lum) / 255f + lum);
+                int newB = (int)(color.getBlue() * (255 - lum) / 255f + lum);
+                
+                return (a << 24) | (newR << 16) | (newG << 8) | newB;
+            }
+        };
+        java.awt.image.ImageProducer producer = new java.awt.image.FilteredImageSource(sourceIcon.getImage().getSource(), filter);
+        Image coloredImage = java.awt.Toolkit.getDefaultToolkit().createImage(producer);
+        return new ImageIcon(coloredImage);
+    }
+
     public PanelQuanLyPhongBan() {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -279,6 +307,22 @@ public class PanelQuanLyPhongBan extends JPanel {
         btn.setFocusPainted(false);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
+
+        // Hiệu ứng Hover đổi màu và đổi con trỏ chuột
+        Color hoverColor = bg.brighter();
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(hoverColor);
+                btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(bg);
+                btn.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
         return btn;
     }
 
@@ -407,7 +451,9 @@ public class PanelQuanLyPhongBan extends JPanel {
         // Table image
         ImageIcon icon = getTableIcon();
         if (icon != null) {
-            JLabel lblImg = new JLabel(icon);
+            // Tự động tô màu icon cho trùng với màu của trạng thái (Xanh lá / Cam / Đỏ)
+            ImageIcon coloredIcon = getColorizedIcon(icon, statusColor);
+            JLabel lblImg = new JLabel(coloredIcon);
             lblImg.setHorizontalAlignment(JLabel.CENTER);
             imgBox.add(lblImg, BorderLayout.CENTER);
         } else {

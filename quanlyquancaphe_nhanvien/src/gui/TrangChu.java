@@ -41,20 +41,9 @@ public class TrangChu extends JFrame {
     //  THANH MENU NGANG (custom JPanel)
     // ══════════════════════════════════════════════════════
     private JPanel buildTopBar() {
-        JPanel bar = new JPanel(new BorderLayout()) {
-            @Override protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                int w = getWidth(), h = getHeight();
-                // Thay GradientPaint bằng màu nền đặc (solid color) 248, 248, 240 theo yêu cầu hình 3
-                g2.setColor(new Color(248, 248, 240));
-                g2.fillRect(0, 0, w, h);
-                g2.setColor(new Color(200, 190, 170)); // Viền dưới màu be đậm
-                g2.drawLine(0, h-1, w, h-1);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
+        JPanel bar = new JPanel(new BorderLayout());
+        bar.setBackground(new Color(242, 235, 225)); // Đổi màu nền bằng màu be nhạt (242, 235, 225) giống hình 1
+        // Đã gỡ bỏ viền đen theo yêu cầu
         bar.setPreferredSize(new Dimension(0, 51));  // 34 * 1.5
 
         // ── Trái: menu buttons ──────────────────────────

@@ -29,7 +29,7 @@ public class Login extends JFrame {
 
         // Khung logo 
         JPanel logoFrame = new JPanel(new BorderLayout());
-        logoFrame.setBackground(new Color(248, 248, 240));
+        logoFrame.setBackground(new Color(242, 235, 225)); // Đổi màu giống hình 1
         logoFrame.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // logo - tìm trong thư mục images/ của project
@@ -74,8 +74,9 @@ public class Login extends JFrame {
 
         // --- Phần bên phải ---
         JPanel whitePanel = new JPanel();
-        whitePanel.setBackground(new Color(248, 248, 240)); // Màu be giống hình 3
+        whitePanel.setBackground(new Color(242, 235, 225)); // Đổi màu giống hình 1
         whitePanel.setLayout(new GridBagLayout());
+        // Bỏ viền phân cách đen, trả lại EmptyBorder cũ
         whitePanel.setBorder(new EmptyBorder(50, 60, 50, 60));
 
         GridBagConstraints gbc = new GridBagConstraints();
