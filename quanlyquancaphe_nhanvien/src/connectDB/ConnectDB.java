@@ -11,7 +11,7 @@ public class ConnectDB {
 
         try {
 
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=QuanLyQuanCafe;encrypt=false";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=QLCAFE;encrypt=false";
             String user = "sa"; 
             String password = "123"; //mật khẩu tài khoản sa của bạn
 

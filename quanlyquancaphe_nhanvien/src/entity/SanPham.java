@@ -1,27 +1,28 @@
 package entity;
 
 public class SanPham {
-
-    private String maSP;
+    private int maSP;
     private String tenSP;
-    private double gia;
-    private String maLoai;
+    private double giaBan;
+    private String donViTinh;
+    private int soLuongTon;
 
     public SanPham() {
     }
 
-    public SanPham(String maSP, String tenSP, double gia, String maLoai) {
+    public SanPham(int maSP, String tenSP, double giaBan, String donViTinh, int soLuongTon) {
         this.maSP = maSP;
         this.tenSP = tenSP;
-        this.gia = gia;
-        this.maLoai = maLoai;
+        this.giaBan = giaBan;
+        this.donViTinh = donViTinh;
+        this.soLuongTon = soLuongTon;
     }
 
-    public String getMaSP() {
+    public int getMaSP() {
         return maSP;
     }
 
-    public void setMaSP(String maSP) {
+    public void setMaSP(int maSP) {
         this.maSP = maSP;
     }
 
@@ -33,19 +34,27 @@ public class SanPham {
         this.tenSP = tenSP;
     }
 
-    public double getGia() {
-        return gia;
+    public double getGiaBan() {
+        return giaBan;
     }
 
-    public void setGia(double gia) {
-        this.gia = gia;
+    public void setGiaBan(double giaBan) {
+        this.giaBan = giaBan;
     }
 
-    public String getMaLoai() {
-        return maLoai;
+    public String getDonViTinh() {
+        return donViTinh;
     }
 
-    public void setMaLoai(String maLoai) {
-        this.maLoai = maLoai;
+    public void setDonViTinh(String donViTinh) {
+        this.donViTinh = donViTinh;
+    }
+
+    public int getSoLuongTon() {
+        return soLuongTon;
+    }
+
+    public void setSoLuongTon(int soLuongTon) {
+        this.soLuongTon = soLuongTon;
     }
 }
