@@ -1,107 +1,60 @@
 package entity;
 
-import java.sql.Date;
-
 public class SanPham {
-    private String maSP;
-    private String maThue;
+    private int maSP;
     private String tenSP;
-    private Double giaBan;
+    private double giaBan;
     private String donViTinh;
-    private String moTa;
-    private int    soLuongTon;
-    private String hanSuDung;
-    private Date   ngayNhap;
+    private int soLuongTon;
 
-    public SanPham(String maSP, String maThue, String tenSP, Double giaBan,
-                   String donViTinh, String moTa, int soLuongTon,
-                   String hanSuDung, Date ngayNhap) {
-        this.maSP       = maSP;
-        this.maThue     = maThue;
-        this.tenSP      = tenSP;
-        this.giaBan     = giaBan;
-        this.donViTinh  = donViTinh;
-        this.moTa       = moTa;
+    public SanPham() {
+    }
+
+    public SanPham(int maSP, String tenSP, double giaBan, String donViTinh, int soLuongTon) {
+        this.maSP = maSP;
+        this.tenSP = tenSP;
+        this.giaBan = giaBan;
+        this.donViTinh = donViTinh;
         this.soLuongTon = soLuongTon;
-        this.hanSuDung  = hanSuDung;
-        this.ngayNhap   = ngayNhap;
     }
 
-    public SanPham(String maSP) {
-        this(maSP, "", "", 0.0, "", "", 0, "", null);
+    public int getMaSP() {
+        return maSP;
     }
 
-	public String getMaSP() {
-		return maSP;
-	}
+    public void setMaSP(int maSP) {
+        this.maSP = maSP;
+    }
 
-	public void setMaSP(String maSP) {
-		this.maSP = maSP;
-	}
+    public String getTenSP() {
+        return tenSP;
+    }
 
-	public String getMaThue() {
-		return maThue;
-	}
+    public void setTenSP(String tenSP) {
+        this.tenSP = tenSP;
+    }
 
-	public void setMaThue(String maThue) {
-		this.maThue = maThue;
-	}
+    public double getGiaBan() {
+        return giaBan;
+    }
 
-	public String getTenSP() {
-		return tenSP;
-	}
+    public void setGiaBan(double giaBan) {
+        this.giaBan = giaBan;
+    }
 
-	public void setTenSP(String tenSP) {
-		this.tenSP = tenSP;
-	}
+    public String getDonViTinh() {
+        return donViTinh;
+    }
 
-	public Double getGiaBan() {
-		return giaBan;
-	}
+    public void setDonViTinh(String donViTinh) {
+        this.donViTinh = donViTinh;
+    }
 
-	public void setGiaBan(Double giaBan) {
-		this.giaBan = giaBan;
-	}
+    public int getSoLuongTon() {
+        return soLuongTon;
+    }
 
-	public String getDonViTinh() {
-		return donViTinh;
-	}
-
-	public void setDonViTinh(String donViTinh) {
-		this.donViTinh = donViTinh;
-	}
-
-	public String getMoTa() {
-		return moTa;
-	}
-
-	public void setMoTa(String moTa) {
-		this.moTa = moTa;
-	}
-
-	public int getSoLuongTon() {
-		return soLuongTon;
-	}
-
-	public void setSoLuongTon(int soLuongTon) {
-		this.soLuongTon = soLuongTon;
-	}
-
-	public String getHanSuDung() {
-		return hanSuDung;
-	}
-
-	public void setHanSuDung(String hanSuDung) {
-		this.hanSuDung = hanSuDung;
-	}
-
-	public Date getNgayNhap() {
-		return ngayNhap;
-	}
-
-	public void setNgayNhap(Date ngayNhap) {
-		this.ngayNhap = ngayNhap;
-	}
-
-   
+    public void setSoLuongTon(int soLuongTon) {
+        this.soLuongTon = soLuongTon;
+    }
 }
