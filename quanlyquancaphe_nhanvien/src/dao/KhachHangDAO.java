@@ -25,7 +25,6 @@ public class KhachHangDAO {
             ps.setString(3, kh.getDiaChi());
             ps.setInt(4, kh.getDiemTichLuy());
             ps.setString(5, kh.getEmail());
-            ps.setString(6, kh.getLoaiKhach());
             
             int rows = ps.executeUpdate();
             int newMaKH = -1;
@@ -59,13 +58,13 @@ public class KhachHangDAO {
 
             if (rs.next()) {
                 KhachHang kh = new KhachHang(
-                    rs.getInt("maKH"),
+                    rs.getString("maKH"),
                     rs.getString("hoTen"),
                     rs.getString("sdt"),
                     rs.getString("diaChi"),
                     rs.getInt("diemTichLuy"),
                     rs.getString("email"),
-                    rs.getString("loaiKhach")
+                    rs.getString("loaiKhach")  // Fix 2: Đọc loaiKhach từ DB
                 );
                 conn.close();
                 return kh;

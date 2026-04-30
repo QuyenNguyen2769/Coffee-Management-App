@@ -328,20 +328,20 @@ INSERT INTO SanPham
 INSERT INTO KhuyenMai (tenKM, mucGiamGia, ngayBatDau, ngayKetThuc, dieuKienToiThieu) VALUES
 
 -- Giảm theo %
-(N'Giảm 10% hóa đơn', 10, '2025-04-01', '2025-04-30', 50000),
-(N'Giảm 20% cuối tuần', 20, '2025-04-05', '2025-04-06', 100000),
+(N'Giảm 10% hóa đơn', 10, '2026-04-01', '2026-04-30', 50000),
+(N'Giảm 20% cuối tuần', 20, '2026-04-26', '2026-04-27', 100000),
 
 -- Khuyến mãi nhỏ
-(N'Giảm 5%', 5, '2025-04-01', '2025-05-01', 30000),
+(N'Giảm 5%', 5, '2026-04-01', '2026-05-31', 30000),
 
 -- Khách VIP
-(N'VIP giảm 25%', 25, '2025-04-01', '2025-12-31', 200000),
+(N'VIP giảm 25%', 25, '2026-01-01', '2026-12-31', 200000),
 
 -- Giờ vàng
-(N'Giờ vàng 15%', 15, '2025-04-01', '2025-04-30', 80000),
+(N'Giờ vàng 15%', 15, '2026-04-01', '2026-04-30', 80000),
 
--- Lễ
-(N'30/4 - 1/5 giảm 30%', 30, '2025-04-30', '2025-05-01', 100000);
+-- Lễ 30/4 - 1/5
+(N'30/4 - 1/5 giảm 30%', 30, '2026-04-30', '2026-05-01', 100000);
 
 -- HoaDon
 INSERT INTO HoaDon (maNV, maBan, ngayLap, tongTien, trangThai, ghiChu, phuongThucThanhToan) VALUES

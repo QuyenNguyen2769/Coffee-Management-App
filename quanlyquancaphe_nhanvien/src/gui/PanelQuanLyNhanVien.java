@@ -197,8 +197,8 @@ public class PanelQuanLyNhanVien extends JPanel {
             ArrayList<NhanVien> ds = bus.getAllNhanVien();
             for (NhanVien nv : ds) {
                 model.addRow(new Object[]{
-                    nv.getMaNV(), nv.getTenNV(), nv.getGioiTinh(),
-                    nv.getDienThoai(), nv.getChucVu()
+                    nv.getMaNV(), nv.getHoTen(), nv.getGioiTinh(),
+                    nv.getSdt(), nv.getChucVu()
                 });
             }
         } catch (Exception e) {

@@ -52,9 +52,9 @@ public class NhanVienDAO {
             String sql = "INSERT INTO NhanVien(MaNV, hoTen, gioiTinh, sdt, chucVu) VALUES(?,?,?,?,?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, nv.getMaNV());
-            ps.setString(2, nv.getTenNV());     // tenNV → hoTen
+            ps.setString(2, nv.getHoTen());     // tenNV → hoTen
             ps.setString(3, nv.getGioiTinh());
-            ps.setString(4, nv.getDienThoai()); // dienThoai → sdt
+            ps.setString(4, nv.getSdt()); // dienThoai → sdt
             ps.setString(5, nv.getChucVu());    // chucVu → chucVu
             int rows = ps.executeUpdate();
             conn.close();
@@ -72,9 +72,9 @@ public class NhanVienDAO {
 
             String sql = "UPDATE NhanVien SET hoTen=?, gioiTinh=?, sdt=?, chucVu=? WHERE MaNV=?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, nv.getTenNV());
+            ps.setString(1, nv.getHoTen());
             ps.setString(2, nv.getGioiTinh());
-            ps.setString(3, nv.getDienThoai());
+            ps.setString(3, nv.getSdt());
             ps.setString(4, nv.getChucVu());
             ps.setString(5, nv.getMaNV());
             int rows = ps.executeUpdate();

@@ -1,51 +1,64 @@
 package entity;
 
 public class TaiKhoan {
-
-    private String username;
-    private String password;
+    private String userName;
     private String maNV;
-    private String role;
+    private String password;
+    private String vaiTro;
+    private String trangThai;
 
-    public TaiKhoan() {
-    }
-
-    public TaiKhoan(String username, String password, String maNV, String role) {
-        this.username = username;
+    public TaiKhoan(String userName, String maNV, String password,
+                    String vaiTro, String trangThai) {
+        this.userName = userName;
+        this.maNV     = maNV;
         this.password = password;
-        this.maNV = maNV;
-        this.role = role;
+        this.vaiTro   = vaiTro;
+        this.trangThai = trangThai;
     }
 
-    public String getUsername() {
-        return username;
+    public TaiKhoan(String userName) {
+        this(userName, "", "", "", "HoatDong");
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getMaNV() {
+		return maNV;
+	}
 
-    public String getMaNV() {
-        return maNV;
-    }
+	public void setMaNV(String maNV) {
+		this.maNV = maNV;
+	}
 
-    public void setMaNV(String maNV) {
-        this.maNV = maNV;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public String getRole() {
-        return role;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+	public String getVaiTro() {
+		return vaiTro;
+	}
+
+	public void setVaiTro(String vaiTro) {
+		this.vaiTro = vaiTro;
+	}
+
+	public String getTrangThai() {
+		return trangThai;
+	}
+
+	public void setTrangThai(String trangThai) {
+		this.trangThai = trangThai;
+	}
+
+   
 }

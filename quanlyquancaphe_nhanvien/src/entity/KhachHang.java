@@ -1,45 +1,98 @@
 package entity;
 
 public class KhachHang {
-    private int maKH;
+    private String maKH;
     private String hoTen;
     private String sdt;
     private String diaChi;
-    private int diemTichLuy;
+    private int    diemTichLuy;
     private String email;
-    private String loaiKhach;
+    private String loaiKhach; // "Khách mới" / "Thường" / "Thân thiết" / "VIP"
 
-    public KhachHang() {
+    public KhachHang(String maKH, String hoTen, String sdt,
+                     String diaChi, int diemTichLuy, String email) {
+        this(maKH, hoTen, sdt, diaChi, diemTichLuy, email, "Khách mới");
     }
 
-    public KhachHang(int maKH, String hoTen, String sdt, String diaChi, int diemTichLuy, String email, String loaiKhach) {
-        this.maKH = maKH;
-        this.hoTen = hoTen;
-        this.sdt = sdt;
-        this.diaChi = diaChi;
+    public KhachHang(String maKH, String hoTen, String sdt,
+                     String diaChi, int diemTichLuy, String email, String loaiKhach) {
+        this.maKH        = maKH;
+        this.hoTen       = hoTen;
+        this.sdt         = sdt;
+        this.diaChi      = diaChi;
         this.diemTichLuy = diemTichLuy;
-        this.email = email;
-        this.loaiKhach = loaiKhach;
+        this.email       = email;
+        this.loaiKhach   = loaiKhach;
     }
 
-    public int getMaKH() { return maKH; }
-    public void setMaKH(int maKH) { this.maKH = maKH; }
+    public KhachHang(String maKH) {
+        this(maKH, "", "", "", 0, "");
+    }
 
-    public String getHoTen() { return hoTen; }
-    public void setHoTen(String hoTen) { this.hoTen = hoTen; }
+	public String getMaKH() {
+		return maKH;
+	}
 
-    public String getSdt() { return sdt; }
-    public void setSdt(String sdt) { this.sdt = sdt; }
+	public void setMaKH(String maKH) {
+		this.maKH = maKH;
+	}
 
-    public String getDiaChi() { return diaChi; }
-    public void setDiaChi(String diaChi) { this.diaChi = diaChi; }
+	public String getHoTen() {
+		return hoTen;
+	}
 
-    public int getDiemTichLuy() { return diemTichLuy; }
-    public void setDiemTichLuy(int diemTichLuy) { this.diemTichLuy = diemTichLuy; }
+	public void setHoTen(String hoTen) {
+		this.hoTen = hoTen;
+	}
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+	public String getSdt() {
+		return sdt;
+	}
 
-    public String getLoaiKhach() { return loaiKhach; }
-    public void setLoaiKhach(String loaiKhach) { this.loaiKhach = loaiKhach; }
+	public void setSdt(String sdt) {
+		this.sdt = sdt;
+	}
+
+	public String getDiaChi() {
+		return diaChi;
+	}
+
+	public void setDiaChi(String diaChi) {
+		this.diaChi = diaChi;
+	}
+
+	public int getDiemTichLuy() {
+		return diemTichLuy;
+	}
+
+	public void setDiemTichLuy(int diemTichLuy) {
+		this.diemTichLuy = diemTichLuy;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getLoaiKhach() {
+		return loaiKhach != null ? loaiKhach : "Khách mới";
+	}
+
+	public void setLoaiKhach(String loaiKhach) {
+		this.loaiKhach = loaiKhach;
+	}
+
+	/** Kiểm tra nhanh xem có phải khách VIP không */
+	public boolean isVIP() {
+		return "VIP".equalsIgnoreCase(loaiKhach);
+	}
+
+	/** Kiểm tra xem có phải thành viên (không phải khách lẻ) không */
+	public boolean isThanhVien() {
+		return loaiKhach != null && !loaiKhach.equalsIgnoreCase("Khách mới");
+	}
+
 }

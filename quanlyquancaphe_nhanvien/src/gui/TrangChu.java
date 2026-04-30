@@ -1,5 +1,8 @@
 package gui;
 
+import connectDB.ConnectDB;
+import entity.TaiKhoan;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -18,17 +21,38 @@ public class TrangChu extends JFrame {
 
     private BufferedImage bgImage;
     private String tenNhanVien;
+    private TaiKhoan taiKhoan;
     private JPanel contentArea;
 
-    public TrangChu() { this("Nguyễn Như Ngọc Quyên"); }
+    // Khai báo các Panel
+    private PanelNhanVien pnNhanVien;
+    private PanelKhachHang pnKhachHang;
+    private PanelTaiKhoan pnTaiKhoan;
+    private PanelTimNhanVien pnTimNhanVien;
+    private PanelTimKhachHang pnTimKhachHang;
+    private PanelPhieuDatBan pnPhieuDatBan;
+    private PanelTimHoaDon pnTimHoaDon;
 
-    public TrangChu(String tenNV) {
+    public TrangChu() { this("Nguyễn Như Ngọc Quyên", new TaiKhoan("Admin", "AD001", "123", "Quản lý", "HoatDong")); }
+
+    public TrangChu(String tenNV, TaiKhoan tk) {
         this.tenNhanVien = tenNV;
+        this.taiKhoan = tk;
         bgImage = loadBgImage();
         setTitle("Quản Lý Quán Cà Phê");
-        setExtendedState(JFrame.MAXIMIZED_BOTH);  // Mở full màn hình
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        
+        // Khởi tạo các panel
+        pnNhanVien = new PanelNhanVien();
+        pnKhachHang = new PanelKhachHang();
+        pnTaiKhoan = new PanelTaiKhoan(tk);
+        pnTimNhanVien = new PanelTimNhanVien();
+        pnTimKhachHang = new PanelTimKhachHang(pnKhachHang);
+        pnPhieuDatBan = new PanelPhieuDatBan();
+        pnTimHoaDon = new PanelTimHoaDon();
+
         add(buildTopBar(), BorderLayout.NORTH);
         contentArea = buildHomePage();
         add(contentArea, BorderLayout.CENTER);
@@ -112,20 +136,22 @@ public class TrangChu extends JFrame {
 
         // ══ Popup: Xử Lý ══════════════════════════════
         JPopupMenu popXL = new JPopupMenu();
-        JMenuItem miPhongBan = pItemImg("Phòng Bàn",    "images/icon_phongban.png");
-        JMenuItem miBanHang  = pItemImg("Bán Hàng",     "images/icon_banhang.png");
-        JMenuItem miLapHD    = pItemImg("Lập Hoá Đơn",  "images/icon_hoadon.png");
-        JMenuItem miDatBan   = pItemImg("Đặt Bàn",      "images/icon_phongban.png");
+        JMenuItem miPhongBan = pItemImg("Phòng Bàn",   "images/icon_phongban.png");
+        JMenuItem miBanHang  = pItemImg("Bán Hàng",    "images/icon_banhang.png");
+        JMenuItem miLapHD    = pItemImg("Lập Hoá Đơn", "images/icon_hoadon.png");
+        JMenuItem miDatBan   = pItemImg("Đặt Bàn",     "images/icon_phongban.png");
         popXL.add(miPhongBan); popXL.add(miBanHang);
         popXL.add(miLapHD); popXL.add(miDatBan);
         attachPopup(mnuXuLy, popXL);
 
         // ══ Popup: Tìm Kiếm ═══════════════════════════
         JPopupMenu popTK = new JPopupMenu();
-        popTK.add(pItemImg("Tìm Nhân Viên",  "images/icon_nhanvien.png"));
-        popTK.add(pItemImg("Tìm Khách Hàng", "images/icon_khachhang.png"));
-        popTK.add(pItemImg("Phiếu Đặt Bàn",  "images/icon_phongban.png"));
-        popTK.add(pItemImg("Tìm Hoá Đơn",    "images/icon_hoadon.png"));
+        JMenuItem miTimNhanVien = pItemImg("Tìm Nhân Viên",  "images/icon_nhanvien.png");
+        JMenuItem miTimKhachHang = pItemImg("Tìm Khách Hàng", "images/icon_khachhang.png");
+        JMenuItem miPhieuDatBan = pItemImg("Phiếu Đặt Bàn",  "images/icon_phongban.png");
+        JMenuItem miTimHoaDon = pItemImg("Tìm Hoá Đơn",    "images/icon_hoadon.png");
+        popTK.add(miTimNhanVien); popTK.add(miTimKhachHang);
+        popTK.add(miPhieuDatBan); popTK.add(miTimHoaDon);
         attachPopup(mnuTimKiem, popTK);
 
         // ══ Popup: Thống Kê ════════════════════════════
@@ -147,6 +173,10 @@ public class TrangChu extends JFrame {
 
         // ══ Sự kiện ════════════════════════════════════
         miTrangChu.addActionListener(e -> switchContent(buildHomePage()));
+        miTaiKhoan.addActionListener(e -> switchContent(pnTaiKhoan));
+        miTroGiup.addActionListener(e -> JOptionPane.showMessageDialog(this,
+            "Hệ Thống Quản Lý Quán Cà Phê\nPhiên bản 1.0\n\nLiên hệ hỗ trợ: admin@cafe.vn",
+            "Trợ Giúp", JOptionPane.INFORMATION_MESSAGE));
         miDangXuat.addActionListener(e -> {
             if (confirm("Bạn có muốn đăng xuất không?", "Đăng Xuất")) {
                 dispose(); new Login().setVisible(true);
@@ -155,16 +185,22 @@ public class TrangChu extends JFrame {
         miThoat.addActionListener(e -> {
             if (confirm("Bạn có muốn thoát không?", "Thoát")) System.exit(0);
         });
-        miNhanVien .addActionListener(e -> switchContent(new PanelQuanLyNhanVien()));
+
+        miNhanVien .addActionListener(e -> { pnNhanVien.loadData(); switchContent(pnNhanVien); });
+        miKhachHang.addActionListener(e -> { pnKhachHang.loadData(); switchContent(pnKhachHang); });
         miHoaDon   .addActionListener(e -> switchContent(placeholder("Quản Lý Hoá Đơn")));
-        miKhachHang.addActionListener(e -> switchContent(placeholder("Quản Lý Khách Hàng")));
         miDichVu   .addActionListener(e -> switchContent(placeholder("Dịch Vụ")));
         miKhuyenMai.addActionListener(e -> switchContent(placeholder("Quản Lý Khuyến Mãi")));
-        miPhongBan .addActionListener(e -> switchContent(new PanelQuanLyPhongBan()));
-        miBanHang  .addActionListener(e -> switchContent(placeholder("Bán Hàng")));
-        miLapHD    .addActionListener(e -> switchContent(placeholder("Lập Hoá Đơn")));
-        miDatBan   .addActionListener(e -> switchContent(new PanelQuanLyPhongBan()));
+        miPhongBan.addActionListener(e -> switchContent(new PanelQuanLyPhongBan()));
+        miBanHang .addActionListener(e -> switchContent(placeholder("Bán Hàng")));
+        miLapHD   .addActionListener(e -> switchContent(placeholder("Lập Hoá Đơn")));
+        miDatBan  .addActionListener(e -> switchContent(new PanelQuanLyPhongBan()));
 
+        miTimNhanVien.addActionListener(e -> switchContent(pnTimNhanVien));
+        miTimKhachHang.addActionListener(e -> switchContent(pnTimKhachHang));
+        miPhieuDatBan.addActionListener(e -> switchContent(pnPhieuDatBan));
+        miTimHoaDon.addActionListener(e -> switchContent(pnTimHoaDon));
+        
         return bar;
     }
 
@@ -427,11 +463,26 @@ public class TrangChu extends JFrame {
 
     private JPanel placeholder(String title) {
         JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(new Color(245,246,250));
-        JLabel lbl = new JLabel(title, JLabel.CENTER);
-        lbl.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        lbl.setForeground(new Color(100,70,40));
-        p.add(lbl, BorderLayout.CENTER);
+        p.setBackground(new Color(245, 246, 250));
+        JPanel center = new JPanel();
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        center.setOpaque(false);
+        JLabel icon = new JLabel("🚧", SwingConstants.CENTER);
+        icon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel lbl = new JLabel(title, SwingConstants.CENTER);
+        lbl.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lbl.setForeground(new Color(100, 70, 40));
+        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel sub = new JLabel("Tính năng đang được phát triển", SwingConstants.CENTER);
+        sub.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        sub.setForeground(new Color(160, 130, 100));
+        sub.setAlignmentX(Component.CENTER_ALIGNMENT);
+        center.add(Box.createVerticalGlue());
+        center.add(icon); center.add(Box.createVerticalStrut(12));
+        center.add(lbl); center.add(Box.createVerticalStrut(8));
+        center.add(sub); center.add(Box.createVerticalGlue());
+        p.add(center, BorderLayout.CENTER);
         return p;
     }
 
@@ -448,6 +499,6 @@ public class TrangChu extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TrangChu("Nguyễn Như Ngọc Quyên").setVisible(true));
+        SwingUtilities.invokeLater(() -> new TrangChu().setVisible(true));
     }
 }

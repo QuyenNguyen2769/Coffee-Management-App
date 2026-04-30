@@ -123,19 +123,20 @@ public class DialogDatBan extends JDialog {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(Color.WHITE);
-                g2.fillRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 10, 10);
-                g2.setColor(new Color(0, 122, 204)); // Blue border
-                g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 10, 10);
+                g2.setColor(getBackground());
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10); // Bo góc 10 cho vừa vặn
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         btnKiemTra.setBounds(300, 175, 90, 28); 
-        btnKiemTra.setForeground(new Color(0, 122, 204));
+        btnKiemTra.setBackground(new Color(0, 122, 204));
+        btnKiemTra.setForeground(Color.WHITE);
+        btnKiemTra.setFont(new Font("Segoe UI", Font.BOLD, 12));
         btnKiemTra.setFocusPainted(false);
         btnKiemTra.setContentAreaFilled(false);
         btnKiemTra.setBorderPainted(false);
+        btnKiemTra.setOpaque(false);
         pnlBody.add(btnKiemTra);
 
         // Sử dụng Icon vẽ tay (Graphics2D) để thay thế hoàn toàn ký tự Unicode, đảm bảo không bao giờ lỗi ô vuông
@@ -153,16 +154,7 @@ public class DialogDatBan extends JDialog {
             public int getIconHeight() { return 24; }
         }
 
-        javax.swing.Icon checkIconToUse = new CheckIcon();
-        try {
-            java.io.File fileTick = new java.io.File("images/tick_check.png");
-            if (fileTick.exists()) {
-                Image imgTick = new ImageIcon(fileTick.getPath()).getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH);
-                checkIconToUse = new ImageIcon(imgTick);
-            }
-        } catch (Exception ex) {}
-
-        lblCheck = new JLabel(checkIconToUse);
+        lblCheck = new JLabel(new CheckIcon());
         lblCheck.setBounds(400, 175, 40, 28);
         lblCheck.setVisible(false); // Ẩn mặc định
         pnlBody.add(lblCheck);
@@ -197,6 +189,7 @@ public class DialogDatBan extends JDialog {
         btnQuayLai.setFocusPainted(false);
         btnQuayLai.setContentAreaFilled(false);
         btnQuayLai.setBorderPainted(false);
+        btnQuayLai.setOpaque(false);
         pnlBody.add(btnQuayLai);
 
         JButton btnDatBan = new JButton("Đặt bàn") {
@@ -217,6 +210,7 @@ public class DialogDatBan extends JDialog {
         btnDatBan.setFocusPainted(false);
         btnDatBan.setContentAreaFilled(false);
         btnDatBan.setBorderPainted(false);
+        btnDatBan.setOpaque(false);
         pnlBody.add(btnDatBan);
 
         // Sự kiện nút Đặt bàn (Luồng xử lý mới)
@@ -226,26 +220,85 @@ public class DialogDatBan extends JDialog {
                 JOptionPane.showMessageDialog(this, "Vui lòng xếp bàn hợp lệ trước khi đặt!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (!lblCheck.isVisible()) {
+            if (!lblCheck.isVisible() || lblTenKhach.getText().equals("...")) {
                 JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra và xác nhận thông tin Khách hàng!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Bước 1: Confirm đặt bàn (Hình 1)
             int confirm = JOptionPane.showConfirmDialog(this, "Xác nhận đặt bàn " + banCap + "?", "Thông báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (confirm == JOptionPane.YES_OPTION) {
-                
-                // TODO: Gọi hàm lưu Phiếu Đặt Bàn xuống Database tại đây
-                
-                // Bước 2: Báo thành công và hỏi thêm dịch vụ (Hình 2)
-                int goiDichVu = JOptionPane.showConfirmDialog(this, "Đặt bàn thành công - Bạn có muốn gọi món (thêm dịch vụ) không?", "Thông báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (goiDichVu == JOptionPane.YES_OPTION) {
-                    // Bước 3: Mở form Gọi món (Hình 3)
-                    this.dispose(); // Đóng form đặt bàn hiện tại
-                    DialogGoiMon dialogGoiMon = new DialogGoiMon(SwingUtilities.getWindowAncestor(this), banCap);
-                    dialogGoiMon.setVisible(true);
-                } else {
-                    this.dispose(); // Đóng form đặt bàn
+                try {
+                    java.sql.Connection conn = connectDB.ConnectDB.getConnection();
+                    if (conn != null) {
+                        conn.setAutoCommit(false);
+                        
+                        // Lấy thông tin
+                        String sdt = txtSDT.getText().trim();
+                        dao.KhachHangDAO khDAO = new dao.KhachHangDAO();
+                        entity.KhachHang kh = khDAO.timKhachHangTheoSDT(sdt);
+                        int maKH = Integer.parseInt(kh.getMaKH());
+                        
+                        // Parse Giờ đến
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm");
+                        java.util.Date parsedDate = sdf.parse(txtGioDen.getText().trim());
+                        java.sql.Timestamp tsNgayDen = new java.sql.Timestamp(parsedDate.getTime());
+                        java.sql.Timestamp tsNgayDat = new java.sql.Timestamp(System.currentTimeMillis());
+
+                        // 1. Insert PhieuDatBan
+                        String sqlPDB = "INSERT INTO PhieuDatBan (maKH, ngayDat, ngayDen, trangThai) VALUES (?, ?, ?, N'Đã đặt')";
+                        java.sql.PreparedStatement ps = conn.prepareStatement(sqlPDB, java.sql.Statement.RETURN_GENERATED_KEYS);
+                        ps.setInt(1, maKH);
+                        ps.setTimestamp(2, tsNgayDat);
+                        ps.setTimestamp(3, tsNgayDen);
+                        ps.executeUpdate();
+                        
+                        java.sql.ResultSet rs = ps.getGeneratedKeys();
+                        int maPDB = -1;
+                        if (rs.next()) {
+                            maPDB = rs.getInt(1);
+                        }
+                        
+                        // 2. Insert ChiTietPhieuDatBan và Cập nhật trạng thái Bàn
+                        if (maPDB != -1) {
+                            String[] dsBan = banCap.split(",");
+                            String sqlCT = "INSERT INTO ChiTietPhieuDatBan (maPDB, maBan, ghiChu) VALUES (?, ?, ?)";
+                            java.sql.PreparedStatement psCT = conn.prepareStatement(sqlCT);
+                            
+                            dao.BanDAO banDAO = new dao.BanDAO();
+                            for (String b : dsBan) {
+                                int soBan = Integer.parseInt(b.trim());
+                                // Lấy maBan thực tế từ soBan
+                                String sqlGetMa = "SELECT maBan FROM Ban WHERE soBan = ?";
+                                java.sql.PreparedStatement psMa = conn.prepareStatement(sqlGetMa);
+                                psMa.setInt(1, soBan);
+                                java.sql.ResultSet rsMa = psMa.executeQuery();
+                                if(rsMa.next()) {
+                                    int maBanReal = rsMa.getInt("maBan");
+                                    psCT.setInt(1, maPDB);
+                                    psCT.setInt(2, maBanReal);
+                                    psCT.setString(3, ""); // ghiChu
+                                    psCT.executeUpdate();
+                                    
+                                    banDAO.capNhatTrangThaiBan(maBanReal, "Đã đặt");
+                                }
+                            }
+                        }
+                        
+                        conn.commit();
+                        conn.close();
+                        
+                        int goiDichVu = JOptionPane.showConfirmDialog(this, "Đặt bàn thành công!\nBạn có muốn gọi món (thêm dịch vụ) không?", "Thông báo", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (goiDichVu == JOptionPane.YES_OPTION) {
+                            this.dispose();
+                            DialogGoiMon dialogGoiMon = new DialogGoiMon(SwingUtilities.getWindowAncestor(this), banCap.split(",")[0].trim());
+                            dialogGoiMon.setVisible(true);
+                        } else {
+                            this.dispose();
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi lưu vào Database!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -397,13 +450,6 @@ public class DialogDatBan extends JDialog {
             }
         });
 
-        btnDatBan.addActionListener(e -> {
-            if(txtSDT.getText().trim().isEmpty() || lblTenKhach.getText().equals("...")) {
-                JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra và xác nhận thông tin khách hàng trước khi đặt bàn!");
-                return;
-            }
-            JOptionPane.showMessageDialog(this, "Đặt bàn thành công cho khách: " + lblTenKhach.getText());
-            dispose();
-        });
+
     }
 }

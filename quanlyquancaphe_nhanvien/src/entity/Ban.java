@@ -1,50 +1,64 @@
 package entity;
 
 public class Ban {
-    private int soBan;
+    private String maBan;
+    private int    soBan;
     private String trangThai;
-    private int sucChua;
+    private int    sucChua;
     private String khuVuc;
 
-    public Ban() {
-    }
-
-    public Ban(int soBan, String trangThai, int sucChua, String khuVuc) {
-        this.soBan = soBan;
+    public Ban(String maBan, int soBan, String trangThai,
+               int sucChua, String khuVuc) {
+        this.maBan     = maBan;
+        this.soBan     = soBan;
         this.trangThai = trangThai;
-        this.sucChua = sucChua;
-        this.khuVuc = khuVuc;
+        this.sucChua   = sucChua;
+        this.khuVuc    = khuVuc;
     }
 
-    public int getSoBan() {
-        return soBan;
+    public Ban(String maBan) {
+        this(maBan, 0, "", 0, "");
     }
 
-    public void setSoBan(int soBan) {
-        this.soBan = soBan;
-    }
+	public String getMaBan() {
+		return maBan;
+	}
 
-    public String getTrangThai() {
-        return trangThai;
-    }
+	public void setMaBan(String maBan) {
+		this.maBan = maBan;
+	}
 
-    public void setTrangThai(String trangThai) {
-        this.trangThai = trangThai;
-    }
+	public int getSoBan() {
+		return soBan;
+	}
 
-    public int getSucChua() {
-        return sucChua;
-    }
+	public void setSoBan(int soBan) {
+		this.soBan = soBan;
+	}
 
-    public void setSucChua(int sucChua) {
-        this.sucChua = sucChua;
-    }
+	public String getTrangThai() {
+		return trangThai;
+	}
 
-    public String getKhuVuc() {
-        return khuVuc;
-    }
+	public void setTrangThai(String trangThai) {
+		this.trangThai = trangThai;
+	}
 
-    public void setKhuVuc(String khuVuc) {
-        this.khuVuc = khuVuc;
-    }
+	public int getSucChua() {
+		return sucChua;
+	}
+
+	public void setSucChua(int sucChua) {
+		this.sucChua = sucChua;
+	}
+
+	public String getKhuVuc() {
+		return khuVuc;
+	}
+
+	public void setKhuVuc(String khuVuc) {
+		this.khuVuc = khuVuc;
+	}
+
+   
 }
