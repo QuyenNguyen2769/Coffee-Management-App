@@ -188,8 +188,8 @@ public class DialogThemKhachHang extends JDialog {
                 return;
             }
             
-            // Khởi tạo Entity KhachHang (maKH = 0 vì DB sẽ tự tăng, diemTichLuy = 0)
-            entity.KhachHang kh = new entity.KhachHang(0, ten, sdt, diaChi, 0, email, loaiKhach);
+            // Khởi tạo Entity KhachHang (maKH = "" vì DB sẽ tự tăng, diemTichLuy = 0)
+            entity.KhachHang kh = new entity.KhachHang("", ten, sdt, diaChi, 0, email);
             
             // Gọi DAO để lưu xuống Database
             dao.KhachHangDAO khDAO = new dao.KhachHangDAO();

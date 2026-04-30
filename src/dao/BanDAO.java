@@ -52,6 +52,7 @@ public class BanDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Ban b = new Ban(
+                    rs.getString("maBan"),
                     rs.getInt("soBan"),
                     rs.getString("trangThai"),
                     rs.getInt("sucChua"),
@@ -64,5 +65,47 @@ public class BanDAO {
             e.printStackTrace();
         }
         return ds;
+    }
+
+    public ArrayList<Ban> getAllBan() {
+        ArrayList<Ban> ds = new ArrayList<>();
+        try {
+            Connection conn = ConnectDB.getConnection();
+            if (conn == null) return ds;
+
+            String sql = "SELECT * FROM Ban";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Ban b = new Ban(
+                    rs.getString("maBan"),
+                    rs.getInt("soBan"),
+                    rs.getString("trangThai"),
+                    rs.getInt("sucChua"),
+                    rs.getString("khuVuc")
+                );
+                ds.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ds;
+    }
+
+    public boolean capNhatTrangThaiBan(int maBan, String trangThai) {
+        try {
+            Connection conn = ConnectDB.getConnection();
+            if (conn == null) return false;
+            String sql = "UPDATE Ban SET trangThai = ? WHERE maBan = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, trangThai);
+            ps.setInt(2, maBan);
+            int n = ps.executeUpdate();
+            conn.close();
+            return n > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

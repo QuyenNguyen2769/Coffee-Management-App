@@ -118,9 +118,9 @@ public class QuanLyNhanVien extends JFrame {
             Object[] row = {
 
                     nv.getMaNV(),
-                    nv.getTenNV(),
+                    nv.getHoTen(),
                     nv.getGioiTinh(),
-                    nv.getDienThoai(),
+                    nv.getSdt(),
                     nv.getChucVu()
 
             };

@@ -28,9 +28,10 @@ public class TaiKhoanDAO {
             if (rs.next()) {
                 TaiKhoan tk = new TaiKhoan(
                     rs.getString("userName"),
+                    rs.getString("maNV"),
                     rs.getString("password"),
-                    rs.getString("maNV"),   // maNV là INT nhưng getString() tự convert
-                    rs.getString("vaiTro") != null ? rs.getString("vaiTro") : "Nhân viên"
+                    rs.getString("vaiTro") != null ? rs.getString("vaiTro") : "Nhân viên",
+                    rs.getString("trangThai")
                 );
                 conn.close();
                 return tk;

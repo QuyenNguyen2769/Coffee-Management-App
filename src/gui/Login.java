@@ -204,12 +204,13 @@ public class Login extends JFrame {
 
             if (tk != null) {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                new TrangChu().setVisible(true);
+                new TrangChu(username, tk).setVisible(true);
                 this.dispose();
             } else if (username.equals("Admin") && password.equals("123")) {
                 // Backup cứng phòng trường hợp Database chưa có dữ liệu
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công (Tài khoản dự phòng)!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                new TrangChu().setVisible(true);
+                entity.TaiKhoan adminTK = new entity.TaiKhoan("Admin", "AD001", "123", "Admin", "HoatDong");
+                new TrangChu("Nguyễn Như Ngọc Quyên", adminTK).setVisible(true);
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng!", "Lỗi", JOptionPane.ERROR_MESSAGE);

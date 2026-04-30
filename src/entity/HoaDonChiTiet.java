@@ -81,5 +81,5 @@ public class HoaDonChiTiet {
 		this.ghiChu = ghiChu;
 	}
 
- 
+
 }

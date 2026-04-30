@@ -21,11 +21,15 @@ public class SanPhamDAO {
 
             while (rs.next()) {
                 SanPham sp = new SanPham(
-                    rs.getInt("maSP"),
+                    rs.getString("maSP"),
+                    rs.getString("maThue"),
                     rs.getString("tenSP"),
                     rs.getDouble("giaBan"),
                     rs.getString("donViTinh"),
-                    rs.getInt("soLuongTon")
+                    rs.getString("moTa"),
+                    rs.getInt("soLuongTon"),
+                    rs.getString("hanSuDung"),
+                    rs.getDate("ngayNhap")
                 );
                 ds.add(sp);
             }
@@ -49,11 +53,15 @@ public class SanPhamDAO {
 
             while (rs.next()) {
                 SanPham sp = new SanPham(
-                    rs.getInt("maSP"),
+                    rs.getString("maSP"),
+                    rs.getString("maThue"),
                     rs.getString("tenSP"),
                     rs.getDouble("giaBan"),
                     rs.getString("donViTinh"),
-                    rs.getInt("soLuongTon")
+                    rs.getString("moTa"),
+                    rs.getInt("soLuongTon"),
+                    rs.getString("hanSuDung"),
+                    rs.getDate("ngayNhap")
                 );
                 ds.add(sp);
             }

@@ -104,45 +104,192 @@ public class PanelQuanLyPhongBan extends JPanel {
         timer.start();
 
         // Left Action Buttons
-        JPanel pnlLeftBtns = new JPanel(new GridLayout(8, 1, 0, 20)); // Tăng khoảng cách để giảm chiều cao mỗi nút
+        JPanel pnlLeftBtns = new JPanel(new GridLayout(8, 1, 0, 20)); // 8 nút
         pnlLeftBtns.setOpaque(false);
-        Color btnGreen = new Color(34, 139, 34); // Forest Green đậm hơn xíu để chữ trắng dễ đọc
-        Color btnGray = new Color(128, 128, 128); // Xám đậm để chữ trắng dễ đọc
+        Color btnGreen = new Color(34, 139, 34); // Forest Green
+        Color btnGray = new Color(128, 128, 128); // Xám đậm
         
-        JButton btnDatNgay = createLeftBtn("Đặt bàn ngay (F4)", btnGreen);
-        JButton btnDatCho = createLeftBtn("Đặt bàn chờ (F5)", btnGreen);
-        JButton btnNhanCho = createLeftBtn("Nhận bàn chờ (F6)", btnGreen);
-        JButton btnHuyCho = createLeftBtn("Huỷ bàn chờ (F7)", btnGreen);
-        JButton btnXemCT = createLeftBtn("Xem chi tiết (F8)", btnGreen);
-        JButton btnChuyen = createLeftBtn("Chuyển bàn (F9)", btnGray);
-        JButton btnDichVu = createLeftBtn("Dịch vụ (F10)", btnGray);
-        JButton btnTinhTien = createLeftBtn("Tính tiền (F11)", btnGray);
+        JButton btnDatTruoc = createLeftBtn("Đặt bàn trước (F4)", btnGreen);
+        JButton btnNhanBan = createLeftBtn("Nhận bàn (F5)", btnGreen);
+        JButton btnHuyDat = createLeftBtn("Huỷ đặt bàn (F6)", btnGreen);
+        JButton btnXemCT = createLeftBtn("Xem chi tiết (F7)", btnGreen);
+        JButton btnChuyen = createLeftBtn("Chuyển bàn (F8)", btnGray);
+        JButton btnGoiMon = createLeftBtn("Gọi món (F9)", btnGray);
+        JButton btnDonBan = createLeftBtn("Dọn bàn (F10)", btnGray);
+        JButton btnDanhSach = createLeftBtn("Danh sách đặt (F11)", btnGray);
 
-        btnDatNgay.addActionListener(e -> {
+        btnDanhSach.addActionListener(e -> {
             Window owner = SwingUtilities.getWindowAncestor(this);
-            DialogDatBan dialog = new DialogDatBan(owner, "001", "Trống", "2 người", "Tầng 1");
+            DialogDanhSachDatBan dialog = new DialogDanhSachDatBan(owner, this);
             dialog.setVisible(true);
         });
-        btnDatCho.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Đặt bàn chờ đang được phát triển!"));
-        btnNhanCho.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Nhận bàn chờ đang được phát triển!"));
-        btnHuyCho.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Huỷ bàn chờ đang được phát triển!"));
-        btnXemCT.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Xem chi tiết đang được phát triển!"));
-        btnChuyen.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Chuyển bàn đang được phát triển!"));
-        btnDichVu.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Dịch vụ đang được phát triển!"));
-        btnTinhTien.addActionListener(e -> JOptionPane.showMessageDialog(this, "Chức năng Tính tiền đang được phát triển!"));
 
-        pnlLeftBtns.add(btnDatNgay);
-        pnlLeftBtns.add(btnDatCho);
-        pnlLeftBtns.add(btnNhanCho);
-        pnlLeftBtns.add(btnHuyCho);
+        btnDatTruoc.addActionListener(e -> {
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            String tId = "001"; String st = "Trống"; String cap = "2 người"; String kv = "Tầng 1";
+            if (selectedTableCard != null) {
+                tId = (String) selectedTableCard.getClientProperty("tableId");
+                int status = (int) selectedTableCard.getClientProperty("status");
+                st = status == 0 ? "Trống" : (status == 1 ? "Đã đặt" : "Đang dùng");
+                cap = selectedTableCard.getClientProperty("capacity") + " người";
+            }
+            DialogDatBan dialog = new DialogDatBan(owner, tId, st, cap, kv);
+            dialog.setVisible(true);
+            loadTables("Tất cả", "Tất cả", "Tất cả", "");
+        });
+
+        btnNhanBan.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn đã đặt để nhận!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int status = (int) selectedTableCard.getClientProperty("status");
+            if (status != 1) {
+                JOptionPane.showMessageDialog(this, "Chỉ có thể nhận bàn khi trạng thái đang là 'Đã đặt'!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String currentId = (String) selectedTableCard.getClientProperty("tableId");
+            // Gọi món sẽ tự tạo hóa đơn và chuyển bàn sang Đang dùng
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            DialogGoiMon dialog = new DialogGoiMon(owner, currentId);
+            dialog.setVisible(true);
+            loadTables("Tất cả", "Tất cả", "Tất cả", "");
+        });
+
+        btnHuyDat.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn đã đặt để hủy!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int status = (int) selectedTableCard.getClientProperty("status");
+            if (status != 1) {
+                JOptionPane.showMessageDialog(this, "Chỉ có thể hủy bàn khi trạng thái đang là 'Đã đặt'!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int opt = JOptionPane.showConfirmDialog(this, "Xác nhận Hủy đặt bàn cho Bàn " + selectedTableCard.getClientProperty("tableId") + "?", "Hủy đặt bàn", JOptionPane.YES_NO_OPTION);
+            if (opt == JOptionPane.YES_OPTION) {
+                int maBan = Integer.parseInt((String) selectedTableCard.getClientProperty("tableId"));
+                new dao.BanDAO().capNhatTrangThaiBan(maBan, "Trống");
+                loadTables("Tất cả", "Tất cả", "Tất cả", "");
+            }
+        });
+        btnXemCT.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn cần xem!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int status = (int) selectedTableCard.getClientProperty("status");
+            if (status == 0) {
+                JOptionPane.showMessageDialog(this, "Bàn này đang trống, không có hóa đơn để xem!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String currentId = (String) selectedTableCard.getClientProperty("tableId");
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            DialogGoiMon dialog = new DialogGoiMon(owner, currentId);
+            dialog.setVisible(true);
+            loadTables("Tất cả", "Tất cả", "Tất cả", ""); // Refresh
+        });
+        btnChuyen.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn cần chuyển từ danh sách!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int status = (int) selectedTableCard.getClientProperty("status");
+            if (status == 0) {
+                JOptionPane.showMessageDialog(this, "Bàn này đang trống, không có khách để chuyển!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            String currentId = (String) selectedTableCard.getClientProperty("tableId");
+            int capacity = (int) selectedTableCard.getClientProperty("capacity");
+            
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            DialogChuyenBan dialog = new DialogChuyenBan(owner, currentId, capacity);
+            dialog.setVisible(true);
+            loadTables("Tất cả", "Tất cả", "Tất cả", ""); // Refresh
+        });
+        btnGoiMon.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn cần gọi món!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            String currentId = (String) selectedTableCard.getClientProperty("tableId");
+            Window owner = SwingUtilities.getWindowAncestor(this);
+            DialogGoiMon dialog = new DialogGoiMon(owner, currentId);
+            dialog.setVisible(true);
+            loadTables("Tất cả", "Tất cả", "Tất cả", ""); // Refresh
+        });
+        
+        btnDonBan.addActionListener(e -> {
+            if (selectedTableCard == null) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn bàn cần dọn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int status = (int) selectedTableCard.getClientProperty("status");
+            if (status == 0) {
+                JOptionPane.showMessageDialog(this, "Bàn này đã trống, không cần dọn!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            String currentId = (String) selectedTableCard.getClientProperty("tableId");
+            int maBan = Integer.parseInt(currentId);
+            dao.HoaDonDAO hdDAO = new dao.HoaDonDAO();
+            
+            // Kiểm tra xem bàn này còn hóa đơn nào chưa thanh toán không
+            if (hdDAO.getHoaDonHienTai(maBan) != -1) {
+                JOptionPane.showMessageDialog(this, "Bàn này vẫn còn hóa đơn chưa thanh toán!\nVui lòng vào 'Gọi món' và Thanh toán trước khi dọn bàn.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int opt = JOptionPane.showConfirmDialog(this, "Xác nhận dọn dẹp Bàn " + currentId + " và chuyển về trạng thái Trống?", "Dọn bàn", JOptionPane.YES_NO_OPTION);
+            if (opt == JOptionPane.YES_OPTION) {
+                if (hdDAO.donBan(maBan)) {
+                    JOptionPane.showMessageDialog(this, "Đã dọn bàn thành công!");
+                    loadTables("Tất cả", "Tất cả", "Tất cả", ""); // Refresh
+                }
+            }
+        });
+
+        pnlLeftBtns.add(btnDatTruoc);
+        pnlLeftBtns.add(btnNhanBan);
+        pnlLeftBtns.add(btnHuyDat);
         pnlLeftBtns.add(btnXemCT);
         pnlLeftBtns.add(btnChuyen);
-        pnlLeftBtns.add(btnDichVu);
-        pnlLeftBtns.add(btnTinhTien);
+        pnlLeftBtns.add(btnGoiMon);
+        pnlLeftBtns.add(btnDonBan);
+        pnlLeftBtns.add(btnDanhSach);
         
         pnlLeft.add(pnlLeftBtns, BorderLayout.CENTER);
 
         pnlContent.add(pnlLeft, BorderLayout.WEST);
+
+        // --- KEY BINDINGS ---
+        InputMap im = pnlLeftBtns.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = pnlLeftBtns.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke("F4"), "F4");
+        am.put("F4", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnDatTruoc.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F5"), "F5");
+        am.put("F5", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnNhanBan.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F6"), "F6");
+        am.put("F6", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnHuyDat.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F7"), "F7");
+        am.put("F7", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnXemCT.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F8"), "F8");
+        am.put("F8", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnChuyen.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F9"), "F9");
+        am.put("F9", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnGoiMon.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F10"), "F10");
+        am.put("F10", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnDonBan.doClick(); }});
+        
+        im.put(KeyStroke.getKeyStroke("F11"), "F11");
+        am.put("F11", new AbstractAction() { public void actionPerformed(java.awt.event.ActionEvent e) { btnDanhSach.doClick(); }});
 
         // --- CENTER PANEL (Filters + Grid) ---
         JPanel pnlCenter = new JPanel(new BorderLayout(0, 10));
@@ -284,9 +431,6 @@ public class PanelQuanLyPhongBan extends JPanel {
         pnlCenter.add(scrollPane, BorderLayout.CENTER);
 
         pnlContent.add(pnlCenter, BorderLayout.CENTER);
-
-        // --- SOUTH LEGEND ---
-        // (Đã bị xoá theo yêu cầu để thay bằng text trong từng thẻ bàn)
     }
 
     private JButton createLeftBtn(String text, Color bg) {
@@ -324,21 +468,6 @@ public class PanelQuanLyPhongBan extends JPanel {
         });
 
         return btn;
-    }
-
-
-
-    private JPanel createLegendItem(String text, Color color) {
-        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        p.setOpaque(false);
-        JLabel lblColor = new JLabel();
-        lblColor.setOpaque(true);
-        lblColor.setBackground(color);
-        lblColor.setPreferredSize(new Dimension(20, 15));
-        lblColor.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-        p.add(lblColor);
-        p.add(new JLabel(text));
-        return p;
     }
 
     private JPanel createTableItem(String id, String capacity, int status, boolean isVip) {
@@ -497,33 +626,41 @@ public class PanelQuanLyPhongBan extends JPanel {
         infoPanel.add(stPanel);
 
         card.add(infoPanel, BorderLayout.SOUTH);
+        
+        // Lưu ID và thông tin để tiện lấy khi click nút "Chuyển bàn"
+        card.putClientProperty("tableId", id.replace("Bàn: ", "").trim());
+        card.putClientProperty("status", status);
+        try {
+            card.putClientProperty("capacity", Integer.parseInt(capacity.replace(" người", "").trim()));
+        } catch (Exception e) {
+            card.putClientProperty("capacity", 0);
+        }
 
         return card;
     }
 
-    private void loadTables(String filterTrangThai, String filterSoNguoi, String filterKhuVuc, String filterBanSo) {
+    public void loadTables(String filterTrangThai, String filterSoNguoi, String filterKhuVuc, String filterBanSo) {
         pnlTables.removeAll();
 
-        // Danh sách 16 bàn mẫu theo database
-        for(int i = 1; i <= 16; i++) {
-            String cap = (i <= 2 || i == 6 || i == 7 || i == 11) ? "2 người" : 
-                         (i <= 4 || i == 8 || i == 9 || i == 12 || i == 13) ? "4 người" : 
-                         (i == 5 || i == 10 || i == 14) ? "6 người" : 
-                         (i == 15) ? "8 người" : "10 người";
+        dao.BanDAO banDAO = new dao.BanDAO();
+        java.util.ArrayList<entity.Ban> dsBan = banDAO.getAllBan();
+        
+        for(entity.Ban b : dsBan) {
+            int soBan = b.getSoBan();
+            String cap = b.getSucChua() + " người";
+            String kv = b.getKhuVuc();
+            String strStatus = b.getTrangThai();
             
-            String kv = (i <= 5) ? "Tầng 1" : (i <= 10) ? "Tầng 2" : (i <= 14) ? "Sân vườn" : "VIP";
-            
-            // 1: Đã đặt, 2: Đang dùng, 0: Trống
-            int status = (i == 5 || i == 9 || i == 14) ? 1 : ((i == 3 || i == 7 || i == 12 || i == 16) ? 2 : 0);
-            boolean vip = (i == 15 || i == 16); 
-            String idStr = String.format("%03d", i);
+            // 0: Trống, 1: Đã đặt, 2: Đang dùng
+            int status = strStatus.equalsIgnoreCase("Trống") ? 0 : strStatus.equalsIgnoreCase("Đã đặt") ? 1 : 2;
+            boolean vip = kv.equalsIgnoreCase("VIP"); 
+            String idStr = String.format("%03d", soBan);
 
             // Kiểm tra bộ lọc
-            String strStatus = (status == 0) ? "Trống" : (status == 1) ? "Đã đặt" : "Đang dùng";
             boolean matchTrangThai = filterTrangThai.equals("Tất cả") || filterTrangThai.equals(strStatus);
             boolean matchSoNguoi = filterSoNguoi.equals("Tất cả") || filterSoNguoi.equals(cap);
             boolean matchKhuVuc  = filterKhuVuc.equals("Tất cả") || filterKhuVuc.equals(kv);
-            boolean matchBanSo   = filterBanSo.isEmpty() || idStr.contains(filterBanSo) || String.valueOf(i).contains(filterBanSo);
+            boolean matchBanSo   = filterBanSo.isEmpty() || idStr.contains(filterBanSo) || String.valueOf(soBan).contains(filterBanSo);
 
             if (matchTrangThai && matchSoNguoi && matchKhuVuc && matchBanSo) {
                 pnlTables.add(createTableItem("Bàn: " + idStr, cap, status, vip));

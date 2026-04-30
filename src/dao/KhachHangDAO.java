@@ -25,7 +25,6 @@ public class KhachHangDAO {
             ps.setString(3, kh.getDiaChi());
             ps.setInt(4, kh.getDiemTichLuy());
             ps.setString(5, kh.getEmail());
-            ps.setString(6, kh.getLoaiKhach());
             
             int rows = ps.executeUpdate();
             int newMaKH = -1;
@@ -59,13 +58,13 @@ public class KhachHangDAO {
 
             if (rs.next()) {
                 KhachHang kh = new KhachHang(
-                    rs.getInt("maKH"),
+                    rs.getString("maKH"),
                     rs.getString("hoTen"),
                     rs.getString("sdt"),
                     rs.getString("diaChi"),
                     rs.getInt("diemTichLuy"),
                     rs.getString("email"),
-                    rs.getString("loaiKhach")
+                    rs.getString("loaiKhach")  // Fix 2: Đọc loaiKhach từ DB
                 );
                 conn.close();
                 return kh;
@@ -75,5 +74,31 @@ public class KhachHangDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    /**
+     * Lấy danh sách Top khách hàng chi tiêu nhiều nhất.
+     */
+    public java.util.ArrayList<Object[]> getTopKhachHang() {
+        java.util.ArrayList<Object[]> list = new java.util.ArrayList<>();
+        try {
+            Connection conn = ConnectDB.getConnection();
+            String sql = "SELECT TOP 10 k.maKH, k.hoTen, k.sdt, COUNT(h.maHD) as soLan, SUM(h.tongTien) as tongChi, k.loaiKhach " +
+                         "FROM KhachHang k JOIN HoaDon h ON k.maKH = h.maKH " +
+                         "WHERE h.trangThai = N'Đã thanh toán' " +
+                         "GROUP BY k.maKH, k.hoTen, k.sdt, k.loaiKhach " +
+                         "ORDER BY SUM(h.tongTien) DESC";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            int rank = 1;
+            while(rs.next()) {
+                list.add(new Object[]{
+                    rank++, rs.getString("hoTen"), rs.getString("sdt"), 
+                    rs.getInt("soLan"), String.format("%,.0fđ", rs.getDouble("tongChi")), 
+                    rs.getString("loaiKhach")
+                });
+            }
+            conn.close();
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
     }
 }
