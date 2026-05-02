@@ -118,6 +118,7 @@ CREATE TABLE SanPham (
     soLuongTon INT,
     hanSuDung DATE,
     ngayNhap DATE,
+    danhMuc NVARCHAR(50),
     FOREIGN KEY (maThue) REFERENCES Thue(maThue)
 );
 
@@ -140,13 +141,15 @@ CREATE TABLE HoaDon (
     maHD INT IDENTITY PRIMARY KEY,
     maNV INT,
     maBan INT,
+    maKH INT,
     ngayLap DATE,
     tongTien FLOAT,
     trangThai NVARCHAR(50),
     ghiChu NVARCHAR(200),
     phuongThucThanhToan NVARCHAR(50),
     FOREIGN KEY (maNV) REFERENCES NhanVien(maNV),
-    FOREIGN KEY (maBan) REFERENCES Ban(maBan)
+    FOREIGN KEY (maBan) REFERENCES Ban(maBan),
+    FOREIGN KEY (maKH) REFERENCES KhachHang(maKH)
 );
 
 /* =======================
@@ -344,20 +347,20 @@ INSERT INTO KhuyenMai (tenKM, mucGiamGia, ngayBatDau, ngayKetThuc, dieuKienToiTh
 (N'30/4 - 1/5 giảm 30%', 30, '2026-04-30', '2026-05-01', 100000);
 
 -- HoaDon
-INSERT INTO HoaDon (maNV, maBan, ngayLap, tongTien, trangThai, ghiChu, phuongThucThanhToan) VALUES
+INSERT INTO HoaDon (maNV, maBan, maKH, ngayLap, tongTien, trangThai, ghiChu, phuongThucThanhToan) VALUES
 
 -- Đã thanh toán
-(1, 3, '2025-04-24', 65000, N'Đã thanh toán', N'', N'Tiền mặt'),
-(2, 7, '2025-04-24', 120000, N'Đã thanh toán', N'Khách VIP', N'Chuyển khoản'),
+(1, 3, NULL, '2025-04-24', 65000, N'Đã thanh toán', N'', N'Tiền mặt'),
+(2, 7, NULL, '2025-04-24', 120000, N'Đã thanh toán', N'Khách VIP', N'Chuyển khoản'),
 
 -- Đang phục vụ
-(2, 5, '2025-04-24', 0, N'Đang phục vụ', N'', NULL),
+(2, 5, NULL, '2025-04-24', 0, N'Đang phục vụ', N'', NULL),
 
 -- Chờ thanh toán
-(1, 8, '2025-04-24', 90000, N'Chờ thanh toán', N'', N'Tiền mặt'),
+(1, 8, NULL, '2025-04-24', 90000, N'Chờ thanh toán', N'', N'Tiền mặt'),
 
 -- Đã hủy
-(1, 2, '2025-04-23', 0, N'Đã hủy', N'Khách không đến', NULL);
+(1, 2, NULL, '2025-04-23', 0, N'Đã hủy', N'Khách không đến', NULL);
 -- HoaDonChiTiet
 INSERT INTO HoaDonChiTiet (maHD, maSP, maKM, soLuong, donGia, thanhTien, ghiChu) VALUES
 
@@ -396,3 +399,9 @@ INSERT INTO HoaDon (maNV, maBan, maKH, ngayLap, tongTien, trangThai) VALUES
 INSERT INTO HoaDon (maNV, maBan, maKH, ngayLap, tongTien, trangThai) VALUES 
 (@nv, @ban, @kh, '2024-06-01', 450000000, N'Đã thanh toán'),
 (@nv, @ban, @kh, '2025-06-01', 620000000, N'Đã thanh toán');
+
+-- Phân loại danh mục sản phẩm
+UPDATE SanPham SET danhMuc = N'Cà Phê' WHERE tenSP LIKE N'%cà phê%' OR tenSP LIKE N'%Americano%' OR tenSP LIKE N'%Latte%' OR tenSP LIKE N'%Cappuccino%' OR tenSP LIKE N'%Mocha%' OR tenSP LIKE N'%Cold Brew%' OR tenSP LIKE N'%Bạc xỉu%';
+UPDATE SanPham SET danhMuc = N'Trà' WHERE tenSP LIKE N'%trà%' OR tenSP LIKE N'%Trà%';
+UPDATE SanPham SET danhMuc = N'Nước Ép' WHERE tenSP LIKE N'%Twister%' OR tenSP LIKE N'%nước ép%';
+UPDATE SanPham SET danhMuc = N'Khác' WHERE danhMuc IS NULL;

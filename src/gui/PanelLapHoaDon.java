@@ -173,7 +173,7 @@ public class PanelLapHoaDon extends JPanel {
         info.setOpaque(false);
         JLabel lblName = new JLabel("<html><body style='width: 130px'>" + tenMon + "</body></html>");
         lblName.setFont(new Font("Segoe UI", Font.BOLD, 14)); 
-        JLabel lblPrice = new JLabel(data[3].toString());
+        JLabel lblPrice = new JLabel(formatPrice(parsePrice(data[3].toString())));
         lblPrice.setFont(new Font("Segoe UI", Font.BOLD, 15)); 
         lblPrice.setForeground(CLR_AMBER);
         info.add(lblName);
@@ -489,12 +489,13 @@ public class PanelLapHoaDon extends JPanel {
         }
         int c = JOptionPane.showConfirmDialog(this, "Xác nhận thanh toán " + df.format(totalAmount) + "?", "Thanh Toán", JOptionPane.YES_NO_OPTION);
         if (c == JOptionPane.YES_OPTION) {
-            String maHD = "HD" + String.format("%03d", DataManager.getDsHoaDon().size() + 1);
-            String ngay = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+            // Lưu hóa đơn vào DB
             String tenKhach = (khHienTai != null) ? khHienTai.getHoTen() : "Khách Lẻ";
-            
-            DataManager.getDsHoaDon().add(new Object[]{maHD, ngay, "admin", tenKhach, df.format(totalAmount), "Đã Thanh Toán"});
-            DataManager.luuHoaDon();
+            Integer maKH_val = null;
+            try { if (khHienTai != null) maKH_val = Integer.parseInt(khHienTai.getMaKH()); }
+            catch (Exception ignored) {}
+            int maHD_int = DataManager.themHoaDon(1, 1, maKH_val, totalAmount, "Đã thanh toán");
+            String maHD = "HD" + String.format("%03d", maHD_int > 0 ? maHD_int : DataManager.getDsHoaDon().size());
             
             // Chuẩn hóa dữ liệu bảng để khớp với DialogHoaDon (5 cột: ID, Tên, Loại, SL, TT)
             DefaultTableModel modelXuat = new DefaultTableModel(new String[]{"ID", "Tên", "Loại", "SL", "Thành Tiền"}, 0);

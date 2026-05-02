@@ -103,17 +103,84 @@ public class PanelHoaDon extends JPanel {
         wrap.setOpaque(false);
 
         // Filter bar
-        JPanel filter = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 12));
+        JPanel filter = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 12));
         filter.setOpaque(false);
         filter.setBorder(new MatteBorder(0, 0, 1, 0, CLR_BORDER));
         
+        // Tạo khung tìm kiếm hiện đại (Icon nằm trong khung)
+        JPanel searchBox = new JPanel(new BorderLayout(8, 0));
+        searchBox.setBackground(CLR_WHITE);
+        searchBox.setBorder(new CompoundBorder(
+            new LineBorder(CLR_BORDER, 1, true),
+            new EmptyBorder(4, 8, 4, 8)));
+        
+        // Icon kính lúp bên trong
+        JLabel lblIcon = new JLabel();
+        try {
+            ImageIcon icon = new ImageIcon("images/icon_timkiem.png");
+            Image img = icon.getImage().getScaledInstance(18, 18, Image.SCALE_SMOOTH);
+            lblIcon.setIcon(new ImageIcon(img));
+        } catch(Exception e) {}
+        
+        // Ô nhập liệu không viền
         JTextField txSearch = new JTextField(15);
         txSearch.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        txSearch.setText("Tìm mã HD...");
+        txSearch.setBorder(null); // Xóa viền của riêng ô nhập
+        
+        final String PLACEHOLDER = "Tìm mã HD...";
+        txSearch.setText(PLACEHOLDER);
         txSearch.setForeground(CLR_GRAY);
-        filter.add(txSearch);
+        
+        txSearch.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (txSearch.getText().equals(PLACEHOLDER)) {
+                    txSearch.setText("");
+                    txSearch.setForeground(CLR_TEXT);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (txSearch.getText().isEmpty()) {
+                    txSearch.setText(PLACEHOLDER);
+                    txSearch.setForeground(CLR_GRAY);
+                }
+            }
+        });
+
+        // Thêm sự kiện tìm kiếm khi nhấn Enter
+        ActionListener searchAction = e -> {
+            String ma = txSearch.getText().trim();
+            if (ma.isEmpty() || ma.equals(PLACEHOLDER)) {
+                loadData();
+            } else {
+                locHoaDonTheoMa(ma);
+            }
+        };
+        txSearch.addActionListener(searchAction);
+
+        // Cho phép click vào kính lúp để tìm kiếm
+        lblIcon.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                searchAction.actionPerformed(null);
+            }
+        });
+
+        searchBox.add(txSearch, BorderLayout.CENTER);
+        searchBox.add(lblIcon, BorderLayout.EAST);
+
+        filter.add(searchBox);
+        filter.add(Box.createHorizontalStrut(15));
         filter.add(new JLabel("Từ ngày:"));
-        filter.add(new JTextField("30/04/2026", 8));
+        
+        JTextField tfDate = new JTextField("30/04/2026", 8);
+        tfDate.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        tfDate.setBorder(new CompoundBorder(
+            new LineBorder(CLR_BORDER, 1, true),
+            new EmptyBorder(5, 8, 5, 8)));
+        filter.add(tfDate);
         
         wrap.add(filter, BorderLayout.NORTH);
 
@@ -174,6 +241,19 @@ public class PanelHoaDon extends JPanel {
             maHD, "admin", "Khách Lẻ", "", model, 95000.0
         );
         dlg.setVisible(true);
+    }
+
+    private void locHoaDonTheoMa(String ma) {
+        tableModel.setRowCount(0);
+        java.util.List<Object[]> ds = DataManager.getDsHoaDon();
+        String search = ma.toLowerCase();
+        for (int i = ds.size() - 1; i >= 0; i--) {
+            Object[] row = ds.get(i);
+            String maHD = row[0].toString().toLowerCase();
+            if (maHD.contains(search)) {
+                tableModel.addRow(new Object[]{row[0], row[1], row[2], row[3], row[4], row[5], ""});
+            }
+        }
     }
 
     private void loadData() {

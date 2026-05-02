@@ -49,7 +49,14 @@ public class PanelTimNhanVien extends JPanel {
 
     private JPanel buildNorth() {
         JPanel w = new JPanel(new BorderLayout(0, 10)); w.setOpaque(false);
-        JLabel lbl = new JLabel("Tìm Nhân Viên");
+        
+        JLabel lbl = new JLabel("  Tìm Nhân Viên");
+        try {
+            ImageIcon icon = new ImageIcon("images/icon_nhanvien.png");
+            Image img = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+            lbl.setIcon(new ImageIcon(img));
+        } catch(Exception e) {}
+        
         lbl.setFont(F_TITLE); lbl.setForeground(C_TITLE);
         w.add(lbl, BorderLayout.NORTH);
         w.add(buildSearchBar(), BorderLayout.CENTER);

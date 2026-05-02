@@ -66,7 +66,14 @@ public class PanelTimKhachHang extends JPanel {
 
     private JPanel buildNorth() {
         JPanel w = new JPanel(new BorderLayout(0, 10)); w.setOpaque(false);
-        JLabel lbl = new JLabel("🔍  Tìm Khách Hàng");
+        
+        JLabel lbl = new JLabel("  Tìm Khách Hàng");
+        try {
+            ImageIcon icon = new ImageIcon("images/icon_khachhang.png"); // Đã đổi sang icon khách hàng
+            Image img = icon.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+            lbl.setIcon(new ImageIcon(img));
+        } catch(Exception e) {}
+        
         lbl.setFont(F_TITLE); lbl.setForeground(C_TITLE);
         w.add(lbl, BorderLayout.NORTH);
         w.add(buildSearchBar(), BorderLayout.CENTER);
